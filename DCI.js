@@ -17,9 +17,7 @@ class Script {
         this.next = this.plot[Symbol.iterator]();
     }
 
-    rehearsal(){
-
-    }
+    rehearsal(){}
 }
 
 

@@ -1,4 +1,4 @@
-import './aggregated_Set_Map';
+import {AggregatedSet} from './aggregated_Set_Map';
 
 class Message extends String {
     constructor({from, to, description, type, sentTime, receivedTime}){
@@ -39,11 +39,14 @@ class IncomeRealtimeMessages extends Messages {
 }
 
 class Messenger {
-    constructor() {
+    constructor(...msgs) {
+        this.msgs = [msgs];
         this.specifiedListeners = new Map;
         Reflect.defineProperty(this, 'subscribedMsgsTypes', {
             get: () => this.listeners.keys(),
-        })
+        });
+
+        setInterval(()=>{this.notify()}, 1000);
     }
 
     subscribe(msgType, ...listeners) {
@@ -53,6 +56,12 @@ class Messenger {
             this.specifiedListeners.set(msgType, new AggregatedSet);
 
         subscribedListeners.add(...listeners);
+    }
+
+    notify(){
+        let msg;
+        while( msg = this.msgs.shift())
+            setTimeout(()=>msg.to.onMessage(msg));
     }
 
     send(msg) {

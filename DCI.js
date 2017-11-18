@@ -1,62 +1,80 @@
+/* a character is created by story
+*  a role is a character being cosplayed by some actor/actress
+*  a scenario is future situation which is likely to happen
+*  a scene is a place setting meanwhile something happened
+*  a plot is a pattern or sequence introduced by happened scenes
+ */
+
 import {Rule, CheckRulesSet, Rules} from './rules';
 import {Message, IncomeRealtimeMessage, Messenger} from './messages';
 
+if (GeneratorFunction === undefined)
+    GeneratorFunction = (function*(){}).constructor;
+
 class Scene {
-    constructor(actors = [], settings = [], title = '') {
-        this.actors = actors;
+    constructor(roles = [], settings = [], title = '') {
+        this.roles = roles;
         this.settings = settings;
         this.title = title;
         this.timeStamp = Date.now();
     }
 }
 
-class Script {
-    constructor (plot = new WeakSet([new Scene]), characters = new Set()){
-        this.characters = characters;
-        this.plot = plot;
-        this.next = this.plot[Symbol.iterator]();
+class Scenario extends Promise{
+    constructor({
+                input,
+                output, // resolve, reject
+                plots, // planned activities
+                constraints, //rules
+                description, //scripting
+                }, resolve, reject){
+        super(resolve, reject);
     }
-
-    rehearsal(){}
 }
 
+class Script {
+    constructor (title, ...characters){
+        this.title = title;
+        this.characters = new Set(characters);
+    }
+
+    hasCharacter(c){
+        this.characters.has(c);
+    }
+}
 
 class Drama {
-    constructor({script = new Script, constraints = new CheckRulesSet, title}) {
-        this.script = script;
+    constructor({   acts = [],
+                    script = new Script,
+                    characters = script.characters,
+                    casting = new WeakSet,
+                    messenger = new Messenger,
+                    constraints = new CheckRulesSet,
+                    title = script.title || 'new drama'} = {}) {
 
-        this.constraints = constraints;
+        let lastScene;
 
-        this.casting = roles;
+        function* plot(..._acts){
+            acts = _acts.length ? _acts : acts;
+            for (let act of acts) {
+                plot.lastScene = lastScene = yield act;
+            }
+        }
+        plot.default = plot();
+        plot.play = plot.default.next.bind(plot.default);
 
-        this.title = title;
+        plot.addRole = function ({person, roleName}){
+        };
 
-        this.messenger = new Messenger;
+        return plot;
     }
-
-    doCasting(roles = new WeakMap){
-        let {director, advisor, guards, casting} = roles;
-        this.director = director || new Director();
-        this.advisor = advisor || new Role;
-        this.guards = guards || [new Role];
-        this.casting = casting || [new Role];
-    }
-
-    play(){
-
-        this.nextPlot = this.script[Symbol.iterator]();
-    }
-
-    end(outcome){}
-
-    terminate(){}
 }
 
 
 class Person {
     constructor({id, name, username, address = '', phone, email}, ...methods){
         this.id = id;
-        this.name = Rules.validation.name.checkupOverall(name) ? name : '';
+        this.name = Rules.validation.name.checkupOverall(name) ? name : 'no_name';
         Reflect.defineProperty(this, 'name', {writable: false});
         Reflect.defineProperty(this, 'id', {writable: false});
         Reflect.defineProperty(this, 'username', {
@@ -74,18 +92,25 @@ class Person {
 
         this.realtimeMsgs = [];
     }
+
+    cosplay(drama,character){
+        return new Role(this, drama, character);
+    }
+
+    onMessage(msg){
+        console.log(`I, ${this.name}, got a msg: { ${msg.description} }`);
+    }
 }
 
-const actor = new Person(
-    {id: `__actor__`},
-    function play(){
+const character = new Person({name:'prototype'}, function play(){
         console.log(`Let's play!`);
     }
 );
 
 class Role {
-    constructor(self = Person.prototype, prototype = actor) {
-        this.prototype = prototype;
+    constructor(self = Person.prototype, drama, characterName) {
+        this.drama = drama;
+        this.name = typeof characterName === 'string' ? characterName : character.name;
         this.self = self;
     }
 }
@@ -100,10 +125,7 @@ class Director extends Role {
         return new Role(person, role);
     }
 
-    async drive(scene, roles) {
-        // play if not started
-        if (!this.drama.nextPlot) this.drama.play(roles);
-
+    async drive(scene) {
         await this.drama.nextPlot(scene);
     }
 }
@@ -118,7 +140,7 @@ class Advisor extends Role {
 
     timekeeping(){}
 
-    captureScene(){}
+    shooting(){}
 
     onTerminate(){}
 
@@ -129,19 +151,18 @@ class Guard extends Role {
     checkInCharacters(characters){}
 
     checkOutCharacters(characters){
-        checkReturnProperties();
+        //checkReturnProperties();
     }
 
     checkInAudience(audience){
-        checkTickets();
-        checkSafety();
+        //checkTickets();
+        //checkSafety();
     }
 
     checkOutAudience(audience){
-        checkReturnProperties();
+        //checkReturnProperties();
     }
 }
 
-const borrow_lend_books = new Script();
-
-
+export {Drama, Script, Scene, Scenario, Director, Advisor, Guard, Role,
+    Person, Messenger, Message, IncomeRealtimeMessage};

@@ -1,4 +1,4 @@
-import './aggregated_Set_Map';
+import {AggregatedSet} from './aggregated_Set_Map';
 
 const ReservedWords = new Set(['admin','administrator','root','习近平']);
 ReservedWords.add = () => {

@@ -5,7 +5,7 @@ let n = 0;
 Promise.prototype = {
 
     then: function(onResolved, onRejected){
-        let {state, value, deferredOnResolved} = this.status;
+        let {state, value, deferredOnResolved, name, promise} = this;
 
         if (state === 'pending'){
             deferredOnResolved.push(onResolved);
@@ -14,15 +14,13 @@ Promise.prototype = {
 
         if (typeof onResolved === 'function') {
             console.log(`接着执行 ${onResolved.name} 来处理`, value);
-            value = onResolved(value);
+            value = onResolved.call(this, value);
         }
 
         if (value instanceof Promise) return value;
 
-        let _status = Object.assign({}, this.status);
-        _status.value = value;
-
-        return Object.create(this,{status: {value:_status}});
+        console.log(`任务${name}执行结束！`);
+        return Object.create(promise, {value: {value: value}});
     },
 };
 
@@ -32,17 +30,22 @@ Promise.resolve= function (v) {
        等待该对象resolved后，再调用当前promise对象的resolve。
        也就是先执行新传入的promise/thenable，再执行自己的promise。
        这意味着新的promise是自己成功执行的【前置任务】！
-    // todo test resolve w/o bind
     */
     if (v && typeof v.then === 'function') {
-        v.then(Promise.resolve.bind(this));
+        let callback = new Proxy(this.resolve.bind(this), {
+            get: (target, property) => {
+                if (property === 'name') return 'resolve_' + this.name;
+                else return target[property];
+            }
+        });
+        v.then(callback);
         return;
     }
 
-    let [status, callbacks] = [this.status, this.status.deferredOnResolved];
-    status.state = 'resolved';
-    status.value = v;
-    callbacks.forEach((call) => setTimeout(call(v)));
+    this.state = 'resolved';
+    this.value = v;
+    this.deferredOnResolved.forEach((call) => setTimeout(call(v)));
+    console.groupEnd();
 
     /*
     如果放在后面这段执行，则意味着新的promise是自己成功执行的【后续任务】！
@@ -55,7 +58,7 @@ Promise.resolve= function (v) {
 };
 
 Promise.reject = function (e){
-    this.status.state = 'rejected';
+    this.state = 'rejected';
     console.log(e);
 };
 
@@ -68,7 +71,7 @@ Promise.reject = function (e){
     * @return {?}
      */
 function Promise(mission){
-    this.status = {
+    let status = {
         name: mission.name,
         description: mission.description,
         state: 'pending',
@@ -76,11 +79,17 @@ function Promise(mission){
 
         //同一个promise之后，多次调用（注意不是链式调用）then，则排队执行
         deferredOnResolved: [],
+
+        resolve: Promise.resolve,
+        reject: Promise.reject,
+        promise: this,
     };
 
-    console.log('#' + n++, `开始任务“${mission.name}”——${mission.description}!`);
+    this.then = this.then.bind(status);
 
-    mission(Promise.resolve.bind(this), Promise.reject.bind(this));
+    console.group('#' + n++, `开始任务“${mission.name}”——${mission.description}!`);
+
+    mission(Promise.resolve.bind(status), Promise.reject.bind(status));
 }
 
 reading.description = '坚持阅读';
@@ -94,9 +103,10 @@ function reading(/*要读*/resolve, /*没完成*/reject){
         borrowBooks.description = '然后借书';
         function borrowBooks(toBargain, reject){
             toBargain(books);
+            return books;
         }
         return new Promise(borrowBooks).then(function ifGot(books){
-            console.log('》》》我借到书了', books);
+            console.log(`》》》我借到${books}了！`);
         })
     });
 
@@ -110,7 +120,7 @@ function searchBooks(/*找到了*/ toFind, /*没找到*/ reject){
     //找啊找……
     let theBook = (function searching(){
         let rate = Math.random() * 10;
-        return rate > 3 ? '《金瓶梅》' : undefined; //找到《金瓶梅》
+        return rate > 0 ? '《金瓶梅》' : undefined; //找到《金瓶梅》
     })();
 
     if(theBook) {

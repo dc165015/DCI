@@ -49,6 +49,29 @@ let judges = {
             return false;
         }
         return true;
+    },
+
+
+    capitalize: function (str) {
+        str = str.trim();
+        str = str.charAt(0).toUpperCase() + str.slice(1);
+        return str;
+    },
+
+    setObject: function (branches, object) {
+        branches = branches.trim().split('.');
+        let stem = this, parent, p;
+        for (p of branches) {
+            parent = stem;
+            stem = stem[p] = stem[p] || {};
+        }
+        parent[p] = object;
+    },
+
+    extend: function (target, source) {
+        for (let p in source) {
+            target[p] = source[p];
+        }
     }
 };
 

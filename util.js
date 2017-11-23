@@ -1,4 +1,27 @@
-const Util = {};
+const Util = {
+    
+        capitalize: function (str) {
+            str = str.trim();
+            str = str.charAt(0).toUpperCase() + str.slice(1);
+            return str;
+        },
+    
+        setObject: function (branches, object) {
+            branches = branches.trim().split('.');
+            let stem = this, parent, p;
+            for (p of branches) {
+                parent = stem;
+                stem = stem[p] = stem[p] || {};
+            }
+            parent[p] = object;
+        },
+    
+        extend: function (target, source) {
+            for (let p in source) {
+                target[p] = source[p];
+            }
+        },
+    };
 
 function log(...args){
     let n = 0;
@@ -7,7 +30,10 @@ function log(...args){
     console.groupEnd();
 }
 
-let [proto_obj, win, doc] = [Object.prototype, window, window.document];
+let win, doc;
+if (typeof window !== 'undefined')
+   (win = window) && (doc = win.document);
+let proto_obj = Object.prototype;
 
 let judges = {
     isNull: function (a) {
@@ -51,30 +77,8 @@ let judges = {
         return true;
     },
 
-
-    capitalize: function (str) {
-        str = str.trim();
-        str = str.charAt(0).toUpperCase() + str.slice(1);
-        return str;
-    },
-
-    setObject: function (branches, object) {
-        branches = branches.trim().split('.');
-        let stem = this, parent, p;
-        for (p of branches) {
-            parent = stem;
-            stem = stem[p] = stem[p] || {};
-        }
-        parent[p] = object;
-    },
-
-    extend: function (target, source) {
-        for (let p in source) {
-            target[p] = source[p];
-        }
-    }
 };
 
 Object.assign(Util, judges);
 
-export {Util, log};
+module.exports = {Util:Util, log:log};

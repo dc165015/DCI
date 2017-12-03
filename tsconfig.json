@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "outDir": "./temp/js",
+        "allowJs": false,
+        "target": "es2017",
+        "alwaysStrict": true,
+        // "module": "commonjs",
+        "declaration": true,
+        "declarationDir": "./src/d.ts",
+        "sourceMap": true,
+        "mapRoot": "./src/map",
+        "strict": false,
+        "traceResolution": true
+    },
+    "include": [
+        "./src/ts/**/*",
+        "./test/**/*"
+        // "./src/jspatterns/AOP.ts"
+    ],
+    "exclude": [
+        // "./built",
+        // "./.d.ts"
+    ]
+}

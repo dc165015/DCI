@@ -1,0 +1,17 @@
+{
+  "name": "dci",
+  "description": "",
+  "main": "test.ts",
+  "authors": [
+    "dc165015 <165015@qq.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/dc165015/DCI",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

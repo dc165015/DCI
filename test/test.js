@@ -1,23 +1,18 @@
-
-var app= {};
-var stack = [];
-app.use = function(cb){
-    stack.push(cb);
+let ctx = [];
+function * g(n){
+    while(1){
+         ctx.push( n++);yield;
+    }
 }
 
-app.use(1);
-app.use(2);
+var gi = g(0);
 
-app.run = function* g(){
-    yield* stack;
-} 
+function call(){
+    gi.next();
+}
 
-var runner = app.run();
-var state= runner.next();
+var a = setInterval(call, 500);
 
+setTimeout(()=>clearInterval(a), 5901 );
 
-console.log(state, state.value);
-runner.next();
-console.log(state, state.value);
-runner.next();
-console.log(state, state.value);
+setTimeout(()=>console.log(ctx), 6000);

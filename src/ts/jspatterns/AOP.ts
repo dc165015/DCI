@@ -39,12 +39,12 @@ class Advisor {
 		let advisor = this,
 			originProperty = sourceObject[targetPropertyName];
 
-			processor.moreIntroduce = Advisor.makeMoreIntroduceHandler(originProperty, advisor);
+			(processor as any).moreIntroduce = Advisor.makeMoreIntroduceHandler(originProperty, advisor);
 			Advisor.setAdviceHandler(sourceObject, targetPropertyName, processor);
 			Advisor.setRevokeHandler(advices, sourceObject, targetPropertyName, originProperty, processor);
 			Advisor.setSetOffIntroductionsHandler(originProperty, advisor);
 			
-			this.processor = processor;
+			(this.processor as any) = processor;
 		function processor (...args) {
 			let { before, wrap, introduce, after, afterThrown, afterFinally } = advices;
 			let result, thrown;

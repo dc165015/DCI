@@ -3,6 +3,8 @@
     "editor.wordWrapColumn": 120,
     "files.autoSave": "onFocusChange",
     "editor.renderWhitespace": "all",
+    // "code-runner.fileDirectoryAsCwd": false,
+    "window.openFilesInNewWindow": "on",
     "window.openFoldersInNewWindow": "on",
     "window.restoreWindows": "all",
     "editor.fontFamily": "Fira Code",

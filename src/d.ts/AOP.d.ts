@@ -1,15 +1,19 @@
-
-interface IAdvices {
-	before?: Function;
-	introduce?: Function;
-	wrap?: Function;
-	after?: Function;
-	afterThrown?: Function;
-	afterFinally?: Function;
+interface IAdvice {
+    before?: Function;
+    introduce?: Function;
+    wrap?: Function;
+    after?: Function;
+    afterThrown?: Function;
+    afterFinally?: Function;
 }
 
 interface IProcessor {
-	advice: Function;
-	revoke: Function;
-	moreIntroduce: Function;
+    embed: Function;
+    revoke: Function;
+    cutIn: Function;
+    setOffIntroductions: Function;
+}
+
+interface IIntroduce {
+    (subject: any, cutin: Function): IProcessor;
 }

@@ -4,7 +4,7 @@
         "allowJs": false,
         "target": "es2017",
         "alwaysStrict": true,
-        // "module": "commonjs",
+        // "module": "esnext",
         "declaration": true,
         "declarationDir": "./src/d.ts",
         "sourceMap": true,

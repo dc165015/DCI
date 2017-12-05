@@ -1,18 +1,19 @@
-/// <reference path="../../d.ts/AOP.d.ts" />
+import {IAdvice, IIntroduce, IProcessor} from '../../d.ts/AOP';
+
 // require('');
 const Aspects = ['before', 'introduce', 'wrap', 'after', 'afterThrown', 'afterFinally'];
-/*
-* @example: introduce(subject, cutin){preprocess(subject);cutin();postProcess(subject); }
-*/
-function hasIntroduction(sourceObject, originProperty: Function | object, args, introduce, advisor) {
-    return introduce ? advisor.introductionsStack.push(introduce) : doOrigin(sourceObject, originProperty, args);
-}
 
-function doOrigin(sourceObject: object, originProperty: Function | object, args) {
+function doOrigin(sourceObject: object, originProperty: Function | object, args: any[]) {
     return typeof originProperty === 'function' ? originProperty.call(sourceObject, ...args) : originProperty;
 }
 
-function aftercare(sourceObject, originProperty, afterThrown, afterFinally, thrown) {
+function aftercare(
+    sourceObject: object,
+    originProperty: Function,
+    afterThrown: Function | undefined,
+    afterFinally: Function | undefined,
+    thrown: any,
+) {
     let result;
     if (thrown && afterThrown) {
         result = afterThrown.call(sourceObject, result, thrown, originProperty);
@@ -26,12 +27,57 @@ function aftercare(sourceObject, originProperty, afterThrown, afterFinally, thro
     return result;
 }
 
-class Advisor  {
+class Advisor {
+    private static makeAdviceHandler(sourceObject: object, targetPropertyName: string): Function {
+        const $embed = embed;
+        // tslint:disable-next-line:no-shadowed-variable
+        return function embed(advice: IAdvice) {
+            return $embed(advice, sourceObject, targetPropertyName);
+        };
+    }
+    private static makeRevokeHandler(
+        advice: IAdvice,
+        sourceObject: object,
+        targetPropertyName: string | symbol,
+        originProperty: Function | object,
+    ): Function {
+        return function revoke(aspects?: Array<keyof IAdvice>) {
+            if (aspects) {
+                undef(advice, aspects);
+            } else {
+                sourceObject[targetPropertyName] = originProperty;
+            }
+            return this;
+        };
+    }
+
+    private static makeCutInHandler(originProperty: any, advisor: Advisor): Function {
+        return function cutIn(introduce: Function) {
+            advisor.introductionsStack.push(introduce);
+            return this;
+        };
+    }
+    private static makeSetOffIntroductionsHandler(subject: object, advisor: Advisor): Function {
+        return function setOffIntroductions() {
+            const stack = advisor.introductionsStack;
+            const itertaor = stack[Symbol.iterator]();
+            (function cutin() {
+                const introduce = itertaor.next().value;
+                // tslint:disable-next-line:no-unused-expression
+                introduce && introduce(subject, cutin);
+            })();
+
+            advisor.introductionsStack.length = 0;
+            return subject;
+        };
+    }
+
     public readonly processor: IProcessor;
     protected readonly introductionsStack: Function[];
-    constructor(sourceObject: object, targetPropertyName: string | symbol, advice: IAdvice = {}) {
-        const advisor = this,
-            originProperty = sourceObject[targetPropertyName];
+    constructor(sourceObject: object, targetPropertyName: string, advice: IAdvice = {}) {
+        const $this = this;
+        const advisor = this;
+        const originProperty = sourceObject[targetPropertyName];
         this.introductionsStack = [];
         this.processor = Object.assign(processor, {
             cutIn: Advisor.makeCutInHandler(originProperty, advisor),
@@ -40,20 +86,21 @@ class Advisor  {
             setOffIntroductions: Advisor.makeSetOffIntroductionsHandler(originProperty, advisor),
         });
 
-        function processor(...args) {
+        function processor() {
             const { before, wrap, introduce, after, afterThrown, afterFinally } = advice;
-            let result, thrown;
+            let result;
+            let thrown;
 
             try {
-                if (before) result = before.call(sourceObject, ...args);
+                if (before) { result = before.call(sourceObject, ...arguments); }
 
                 if (wrap) {
-                    result = wrap.call(sourceObject, originProperty, ...args);
+                    result = wrap.call(sourceObject, originProperty, ...arguments);
                 } else {
-                    result = hasIntroduction(sourceObject, originProperty, args, introduce, advisor);
+                    result = $this.hasIntroduction(sourceObject, originProperty, [...arguments], introduce, advisor);
                 }
 
-                if (after) result = after.call(sourceObject, result, originProperty);
+                if (after) { result = after.call(sourceObject, result, originProperty); }
             } catch (e) {
                 thrown = e;
             }
@@ -64,87 +111,28 @@ class Advisor  {
         }
     }
 
-    static makeAdviceHandler(sourceObject: object, targetPropertyName: string | symbol): Function {
-        const _embed = embed;
-        return function embed(advice: IAdvice) {
-            return _embed(advice, sourceObject, targetPropertyName);
-        };
-    }
-    static makeRevokeHandler(
-        advice: IAdvice,
+    private hasIntroduction(
         sourceObject: object,
-        targetPropertyName: string | symbol,
         originProperty: Function | object,
-    ): Function {
-        return function revoke(aspects?: (keyof IAdvice)[]) {
-            if (aspects) {
-                undef(advice, aspects);
-            } else {
-                sourceObject[targetPropertyName] = originProperty;
-            }
-            return this;
-        };
-    }
-
-    static makeCutInHandler(originProperty: any, advisor: Advisor): Function {
-        return function cutIn(introduce) {
-            advisor.introductionsStack.push(introduce);
-            return this;
-        };
-    }
-    static makeSetOffIntroductionsHandler(subject: any, advisor: Advisor): Function {
-        return function setOffIntroductions() {
-            let stack = advisor.introductionsStack;
-            const itertaor = stack[Symbol.iterator]();
-            (function cutin() {
-                const introduce = itertaor.next().value;
-                introduce && introduce(subject, cutin);
-            })();
-
-            advisor.introductionsStack.length = 0;
-            return subject;
-        };
+        args: any[],
+        introduce: Function | undefined,
+        advisor: Advisor,
+    ) {
+        return introduce ? advisor.introductionsStack.push(introduce) : doOrigin(sourceObject, originProperty, args);
     }
 }
 
-function undef(object: object, properties: (string | symbol)[] = []) {
-    properties.forEach(p => (object[p] = undefined));
+function undef(object: object, properties: Array<string | symbol> = []) {
+    properties.forEach((p) => (object[p] = undefined));
 }
 
-function embed(advice: IAdvice, sourceObject: object, targetPropertyName: string | symbol) {
+function embed(advice: IAdvice, sourceObject: object, targetPropertyName: string) {
     const originProperty: Function | object = sourceObject[targetPropertyName];
     const processor = new Advisor(sourceObject, targetPropertyName, advice).processor;
 
     sourceObject[targetPropertyName] = processor;
 
     return processor;
-}
-
-class Introduction {
-    protected introductionsStack: Function[];
-    constructor(public subject) {
-        this.introductionsStack = [];
-    }
-
-    public cutIn(introduce) {}
-
-    static cutIn(subject, introduce) {
-        const introduction = new Introduction(subject);
-        introduction.cutIn(introduce);
-        return introduction;
-    }
-
-    public setOff() {
-        let stack = this.introductionsStack;
-        const itertaor = stack[Symbol.iterator]();
-        (function cutin() {
-            const introduce = itertaor.next().value;
-            introduce && introduce(this.subject, cutin);
-        })();
-
-        stack = [];
-        return this.subject;
-    }
 }
 
 export { embed };

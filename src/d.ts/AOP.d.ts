@@ -1,4 +1,4 @@
-interface IAdvice {
+export interface IAdvice {
     before?: Function;
     introduce?: Function;
     wrap?: Function;
@@ -7,13 +7,13 @@ interface IAdvice {
     afterFinally?: Function;
 }
 
-interface IProcessor {
+export interface IProcessor {
     embed: Function;
     revoke: Function;
     cutIn: Function;
     setOffIntroductions: Function;
 }
 
-interface IIntroduce {
+export interface IIntroduce {
     (subject: any, cutin: Function): IProcessor;
 }

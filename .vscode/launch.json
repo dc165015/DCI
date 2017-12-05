@@ -22,7 +22,7 @@
                 "-r",
                 "ts-node/register",
                 // "-r",
-                // "esnext",
+                // "es2017",
                 "${relativeFile}", // 调试当前文件
                 "--colors",
                 "-t 100000" // 设置超时时间，因为调试时执行时间较长容易触发超时

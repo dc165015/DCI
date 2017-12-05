@@ -2,18 +2,26 @@
     "compilerOptions": {
         "outDir": "./temp/js",
         "allowJs": false,
-        "target": "es2017",
+        "target": "es5",
         "alwaysStrict": true,
         // "module": "esnext",
+        "moduleResolution": "classic",
+        "lib": [
+            "esnext",
+            "dom"
+        ],
         "declaration": true,
         "declarationDir": "./src/d.ts",
         "sourceMap": true,
         "mapRoot": "./src/map",
         "strict": false,
-        "traceResolution": true
+        "traceResolution": true,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "suppressImplicitAnyIndexErrors": true
     },
     "include": [
-        "./src/ts/**/*",
+        // "./src/ts/**/*",
         "./test/**/*"
         // "./src/jspatterns/AOP.ts"
     ],

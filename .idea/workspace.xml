@@ -1,26 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/Promise2Borrow&amp;Lend.js" line="24" />
-  </component>
   <component name="ChangeListManager">
-    <list default="true" id="2be26be5-77cb-4995-8dfd-ecdc52cfc927" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/DCI.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Promise2Borrow&amp;Lend.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aggregated_Set_Map.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aop.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/borrow_lend.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/interface.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/jspatterns/module.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/jspatterns/singleton.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/messages.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/observer.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/rules.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/t.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/testGeneratorPromise.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/util.js" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-    </list>
+    <list default="true" id="2be26be5-77cb-4995-8dfd-ecdc52cfc927" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
     <ignored path="$PROJECT_DIR$/tmp/" />
@@ -120,6 +101,9 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
+  <component name="NodeModulesDirectoryManager">
+    <handled-path value="$PROJECT_DIR$/node_modules" />
+  </component>
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-8" />
     <option name="width" value="1931" />
@@ -129,7 +113,7 @@
     <ConfirmationsSetting value="1" id="Add" />
   </component>
   <component name="ProjectView">
-    <navigator proportions="" version="1">
+    <navigator currentView="ProjectPane" proportions="" version="1">
       <flattenPackages />
       <showMembers />
       <showModules />
@@ -137,12 +121,26 @@
       <hideEmptyPackages />
       <abbreviatePackageNames />
       <autoscrollToSource />
-      <autoscrollFromSource Scratches="true" ProjectPane="true" />
+      <autoscrollFromSource ProjectPane="true" Scratches="true" />
       <sortByType />
       <manualOrder />
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes />
+    <panes>
+      <pane id="Scratches" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="DCI" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DCI" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="settings.editor.selected.configurable" value="settings.nodejs" />
@@ -265,6 +263,7 @@
       <workItem from="1511506084564" duration="598000" />
       <workItem from="1511538193869" duration="85000" />
       <workItem from="1511662518759" duration="598000" />
+      <workItem from="1512526144192" duration="470000" />
     </task>
     <task id="LOCAL-00001" summary="remove spaces">
       <created>1510728817265</created>
@@ -305,12 +304,12 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="177868000" />
+    <option name="totallyTimeSpent" value="178338000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.4962963" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.4962963" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32908705" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
